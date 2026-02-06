@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head><title>Merchant Portal</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-50 p-6">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-[2rem] shadow-xl">
+        <h2 class="text-2xl font-black mb-6">Start Selling</h2>
+        <input id="shop-name" placeholder="Shop Name" class="w-full border p-4 rounded-xl mb-4 outline-none">
+        <input id="prod-name" placeholder="Product Name" class="w-full border p-4 rounded-xl mb-4 outline-none">
+        <input id="prod-price" type="number" placeholder="Price (INR)" class="w-full border p-4 rounded-xl mb-6 outline-none">
+        <button onclick="addGlobalProduct()" class="w-full bg-blue-700 text-white py-4 rounded-xl font-bold">List Product Live</button>
+    </div>
+
+    <script>
+        function addGlobalProduct() {
+            let market = JSON.parse(localStorage.getItem('hai_market')) || [];
+            const newProd = {
+                id: Date.now(),
+                shopName: document.getElementById('shop-name').value,
+                productName: document.getElementById('prod-name').value,
+                price: document.getElementById('prod-price').value
+            };
+            market.push(newProd);
+            localStorage.setItem('hai_market', JSON.stringify(market));
+            alert("Product listed successfully in HAI Global!");
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
