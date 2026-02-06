@@ -1,0 +1,31 @@
+<div class="profile-card">
+    <h2 class="font-black text-xl text-blue-800 mb-5">Seller Registration</h2>
+    
+    <div class="grid grid-cols-2 gap-3 mb-4">
+        <input type="text" id="s-name" class="input-box" placeholder="आपका नाम">
+        <input type="text" id="s-shop" class="input-box" placeholder="दुकान का नाम">
+    </div>
+    <input type="email" id="s-email" class="input-box" placeholder="ईमेल">
+    <input type="password" id="s-pass" class="input-box" placeholder="पासवर्ड सेट करें">
+    <input type="tel" id="s-mobile" class="input-box" placeholder="मोबाइल नंबर">
+    <input type="text" id="s-gst" class="input-box" placeholder="GST/VAT (वैकल्पिक)">
+
+    <h3 class="font-bold text-xs mt-4 text-gray-400">LOCATION DETAILS</h3>
+    <div class="grid grid-cols-2 gap-2">
+        <input type="text" id="s-country" class="input-box" placeholder="देश">
+        <input type="text" id="s-state" class="input-box" placeholder="स्टेट">
+        <input type="text" id="s-dist" class="input-box" placeholder="जिला">
+        <input type="number" id="s-pin" class="input-box" placeholder="पिन कोड">
+    </div>
+
+    <div class="bg-gray-50 p-4 rounded-xl border-2 border-dashed border-gray-200 mt-4">
+        <p class="text-[10px] font-bold mb-2">UPLOAD PRODUCT (Photo/Video)</p>
+        <div class="flex gap-2">
+            <input type="file" id="prod-media" accept="image/*,video/*" class="hidden">
+            <button onclick="document.getElementById('prod-media').click()" class="bg-white border p-2 rounded text-xs">📁 Gallery/Drive</button>
+            <button onclick="openCamera()" class="bg-white border p-2 rounded text-xs">📷 Camera (F/B)</button>
+        </div>
+    </div>
+
+    <button class="btn-save mt-6" onclick="registerSeller()">CREATE SELLER ACCOUNT</button>
+</div>
