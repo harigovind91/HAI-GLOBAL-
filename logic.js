@@ -1,27 +1,84 @@
-// logic.js
-let marketplaceData = JSON.parse(localStorage.getItem('hai_market')) || [];
+/**
+ * HAI Global - Multi-Vendor Split Payment Logic
+ * Created by: Scientist Harigovind
+ * Release: 2026.02.06
+ */
 
+// 1. एडमिन और कमीशन सेटिंग्स
+const HAI_ADMIN_CONFIG = {
+    myUpi: "harigovindsingh91-2@okhdfcbank",
+    adminCommissionPercent: 10,   // आपका 10%
+    deliveryFeePercent: 5,        // डेलिवरी बॉय का 5%
+    holdPaymentStatus: "HOLD"     // जब तक डेलिवरी न हो, पैसा होल्ड पर
+};
+
+// 2. मार्केटप्लेस लोड करने का फंक्शन
 function loadMarketplace() {
-    const list = document.getElementById('product-list');
-    if (marketplaceData.length === 0) {
-        list.innerHTML = `<div class='col-span-2 text-center p-10 text-gray-400'>No sellers nearby yet.</div>`;
-        return;
-    }
-
-    list.innerHTML = marketplaceData.map(item => `
-        <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100">
-            <div class="bg-gray-200 h-32 rounded-xl mb-3 flex items-center justify-center text-gray-400">Image</div>
-            <h3 class="font-bold text-sm truncate">${item.productName}</h3>
-            <p class="text-[10px] text-blue-500 font-bold mb-2">${item.shopName}</p>
-            <div class="flex justify-between items-center">
-                <span class="font-black text-lg">₹${item.price}</span>
-                <button onclick="placeOrder('${item.id}')" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-lg font-bold">BUY</button>
-            </div>
-        </div>
-    `).join('');
+    console.log("HAI Systems Active...");
+    // यहाँ आप भविष्य में API से प्रोडक्ट्स फेच कर सकते हैं
+    updateUserLocation();
 }
 
-function placeOrder(id) {
-    const otp = Math.floor(1000 + Math.random() * 9000);
-    alert(`Order Confirmed! \nSecurity OTP: ${otp}\nShow this to your delivery rider.`);
+// 3. पिन कोड/लोकेशन अपडेट
+function updateUserLocation() {
+    const savedProfile = JSON.parse(localStorage.getItem('hai_user_profile'));
+    const pinElement = document.getElementById('pin-code');
+    if (savedProfile && savedProfile.pin) {
+        pinElement.innerText = "DELIVERY TO: " + savedProfile.pin;
+    }
+}
+
+// 4. मुख्य पेमेंट इंजन (The Split Logic)
+function payWithCommission(productId, totalAmount) {
+    // कैलकुलेशन
+    const adminShare = (totalAmount * HAI_ADMIN_CONFIG.adminCommissionPercent) / 100;
+    const deliveryShare = (totalAmount * HAI_ADMIN_CONFIG.deliveryFeePercent) / 100;
+    const sellerShare = totalAmount - (adminShare + deliveryShare);
+
+    // डेटा तैयार करना
+    const orderData = {
+        id: "HAI-" + Math.floor(Math.random() * 1000000),
+        prodId: productId,
+        amount: totalAmount,
+        adminAmt: adminShare,
+        deliveryAmt: deliveryShare,
+        sellerAmt: sellerShare,
+        status: "PENDING_DELIVERY",
+        timestamp: new Date().toISOString()
+    };
+
+    // ऑर्डर को लोकल स्टोरेज (या डेटाबेस) में सेव करना
+    saveOrderToSystem(orderData);
+
+    // UPI पेमेंट ट्रिगर (आपका कमीशन सबसे पहले)
+    // नोट: यहाँ हम एडमिन को पैसे भेज रहे हैं, बाकी पैसा बैकएंड से स्प्लिट होगा
+    const upiLink = `upi://pay?pa=${HAI_ADMIN_CONFIG.myUpi}&am=${adminShare}&cu=INR&tn=HAI_ORDER_${orderData.id}_COMMISSION`;
+    
+    console.log(`Split Info: Admin: ${adminShare}, Seller: ${sellerShare}, Rider: ${deliveryShare}`);
+    
+    alert(`प्रक्रिया शुरू: ऑर्डर ID ${orderData.id}\nआपका कमीशन (₹${adminShare}) प्रोसेस हो रहा है।`);
+    window.location.href = upiLink;
+}
+
+// 5. ऑर्डर सेविंग फंक्शन
+function saveOrderToSystem(order) {
+    let orders = JSON.parse(localStorage.getItem('hai_orders')) || [];
+    orders.push(order);
+    localStorage.setItem('hai_orders', JSON.stringify(orders));
+}
+
+// 6. डेलिवरी कन्फर्मेशन और राइडर पेमेंट रिलीज (यह एडमिन/राइडर पैनल से कॉल होगा)
+function releaseRiderPayment(orderId) {
+    let orders = JSON.parse(localStorage.getItem('hai_orders')) || [];
+    let orderIndex = orders.findIndex(o => o.id === orderId);
+
+    if (orderIndex !== -1) {
+        orders[orderIndex].status = "DELIVERED";
+        const riderAmt = orders[orderIndex].deliveryAmt;
+        
+        // यहाँ से राइडर के UPI पर पैसा भेजने का लॉजिक शुरू होगा
+        alert(`डेलिवरी सफल! राइडर को ₹${riderAmt} रिलीज किए जा रहे हैं।`);
+        
+        localStorage.setItem('hai_orders', JSON.stringify(orders));
+    }
 }
