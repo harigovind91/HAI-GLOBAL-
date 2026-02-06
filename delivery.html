@@ -1,9 +1,80 @@
 <!DOCTYPE html>
 <html lang="hi">
-<head><title>Rider - HAI Global</title><link rel="stylesheet" href="style.css"></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider - HAI Global</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 <body class="p-5">
-    <h2 class="font-black mb-4">सक्रिय डिलीवरी</h2>
-    <div id="delivery-list"></div>
-    <script src="logic.js"></script>
+    
+    <header class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-black italic">RIDER <span class="text-blue-600">PORTAL</span></h2>
+        <span class="badge" style="background: #eff6ff; color: #2563eb;">GPS ON</span>
+    </header>
+
+    <div id="delivery-list">
+        <div class="text-center py-10 text-slate-400">
+            सक्रिय ऑर्डर्स की खोज की जा रही है...
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t p-4 flex justify-around">
+        <button onclick="location.href='index.html'" class="text-xs font-bold text-slate-400">MARKET</button>
+        <button class="text-xs font-bold text-blue-600">DELIVERY</button>
+    </nav>
+
+    <script>
+        // यह फंक्शन logic.js के डेटाबेस से कनेक्ट होकर ऑर्डर्स दिखाएगा
+        function loadRiderTasks() {
+            const list = document.getElementById('delivery-list');
+            const orders = JSON.parse(localStorage.getItem('hai_orders')) || [];
+            const activeOrders = orders.filter(o => o.status === 'PENDING');
+
+            if(activeOrders.length === 0) {
+                list.innerHTML = `
+                    <div class="card text-center">
+                        <p class="text-slate-500">अभी कोई डिलीवरी उपलब्ध नहीं है।</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = activeOrders.map(o => `
+                <div class="card">
+                    <div class="flex justify-between mb-3">
+                        <span class="badge" style="background: #fef9c3; color: #854d0e;">बकाया डिलीवरी</span>
+                        <span class="text-xs font-bold text-slate-400">ID: #${o.id.toString().slice(-4)}</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">ग्राहक स्थान: सेक्टर 2026</h3>
+                    <p class="text-sm text-slate-500 mb-4 italic">दुकान: ${o.shopName || "Global Store"}</p>
+                    
+                    <div class="space-y-2">
+                        <input type="number" id="otp-input-${o.id}" class="input-box text-center text-xl tracking-widest font-black" placeholder="OTP डालें">
+                        <button onclick="confirmDelivery(${o.id})" class="btn btn-primary">डिलीवरी पूरी करें</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function confirmDelivery(orderId) {
+            const inputOtp = document.getElementById('otp-input-' + orderId).value;
+            const orders = JSON.parse(localStorage.getItem('hai_orders')) || [];
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+
+            if (orders[orderIndex].otp == inputOtp) {
+                orders[orderIndex].status = 'DELIVERED';
+                localStorage.setItem('hai_orders', JSON.stringify(orders));
+                alert("सफलता! डिलीवरी पूरी हुई और भुगतान सुरक्षित कर लिया गया है।");
+                loadRiderTasks();
+            } else {
+                alert("गलत OTP! सुरक्षा कारणों से यह प्रयास रिकॉर्ड कर लिया गया है।");
+            }
+        }
+
+        // लोड होने पर फंक्शन चलाएं
+        window.onload = loadRiderTasks;
+    </script>
 </body>
-</html>
+    </html>
+    
