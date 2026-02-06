@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding-bottom: 80px; }
+.card { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 15px; border: 1px solid #e2e8f0; }
+.btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+.btn-primary { background: #2563eb; color: white; }
+.btn-admin { background: #1e293b; color: #38bdf8; }
+.input-box { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; }
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; }
+            
