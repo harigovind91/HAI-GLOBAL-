@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8"><title>HAI Global - Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body onload="initCustomer()">
+    <header class="p-5 bg-white shadow-sm flex justify-between items-center">
+        <h1 class="text-2xl font-black text-blue-600 italic">HAI Global</h1>
+        <div id="gps-stat" class="text-[10px] font-bold text-slate-400">Locating...</div>
+    </header>
+    <main class="p-4 max-w-lg mx-auto">
+        <h2 class="text-xl font-extrabold mb-4">नजदीकी प्रोडक्ट्स</h2>
+        <div id="shop-container"></div>
+    </main>
+    <nav class="fixed bottom-0 w-full bg-white p-4 flex justify-around border-t shadow-lg">
+        <button onclick="location.href='index.html'" class="text-blue-600"><i class="fa fa-home"></i> Home</button>
+        <button onclick="location.href='merchant.html'">Shop</button>
+        <button onclick="location.href='delivery.html'">Rider</button>
+    </nav>
+    <script src="logic.js"></script>
+</body>
+</html>
