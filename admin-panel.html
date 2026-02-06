@@ -1,17 +1,53 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <title>HAI Global - Admin Control</title>
-    <link rel="stylesheet" href="style.css">
+    <title>HAI Master Control | Backend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white p-5">
-    <div class="card bg-slate-800 border-slate-700">
-        <h1 class="text-blue-400 font-black">HAI MASTER ADMIN</h1>
-        <input type="password" id="master-key" class="input-box bg-slate-700 text-white" placeholder="Master Security Key">
-        <button onclick="loadGlobalData()" class="btn btn-admin">Access Secure Database</button>
+<body class="bg-black text-green-400 p-6 font-mono">
+    <div id="secure-gate" class="flex items-center justify-center min-h-screen">
+        <div class="border-2 border-green-900 p-10 rounded-3xl bg-gray-900 shadow-2xl">
+            <h1 class="text-2xl font-black mb-6 text-center tracking-widest">MASTER SCIENTIST LOGIN</h1>
+            <input type="password" id="masterKey" placeholder="Enter Security Key" class="w-full bg-black border border-green-800 p-3 rounded mb-4 text-center focus:border-green-400 outline-none">
+            <button onclick="verifyAccess()" class="w-full bg-green-700 text-black font-bold py-3 rounded hover:bg-green-400 transition">ACCESS CORE</button>
+        </div>
     </div>
-    <div id="admin-stats" class="mt-5"></div>
-    <script src="logic.js"></script>
+
+    <div id="dashboard" class="hidden">
+        <header class="flex justify-between border-b border-green-900 pb-4 mb-8">
+            <h2 class="text-xl font-bold">CORE DATABASE v2.0</h2>
+            <div class="text-right">
+                <p>ADMIN: Harigovind</p>
+                <p class="text-xs">UPI: harigovindsingh91-2@okhdfcbank</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-900 p-6 rounded-xl border border-green-900">
+                <p class="text-xs uppercase">Total Commission Earned</p>
+                <h3 class="text-3xl font-black mt-2 text-white">₹ <span id="comm-total">0.00</span></h3>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-xl border border-orange-900">
+                <p class="text-xs uppercase">Funds on Hold (Riders)</p>
+                <h3 class="text-3xl font-black mt-2 text-orange-500">₹ <span id="hold-total">0.00</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function verifyAccess() {
+            const key = document.getElementById('masterKey').value;
+            if(key === "HARI_2026_GLOBAL") {
+                document.getElementById('secure-gate').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadBackendData();
+            } else { alert("ACCESS DENIED: Unauthorized scientist detected."); }
+        }
+
+        function loadBackendData() {
+            // Yeh function logic.js se data uthayega (Database ke zariye)
+            console.log("Fetching live transaction data...");
+        }
+    </script>
 </body>
 </html>
-
