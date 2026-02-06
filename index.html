@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAI Global - Multi-Vendor Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100" onload="loadMarketplace()">
+
+    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
+        <div class="flex justify-between items-center max-w-6xl mx-auto">
+            <h1 class="text-2xl font-black text-blue-700">HAI GLOBAL</h1>
+            <div id="user-location" class="text-[10px] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                Tracking Secure GPS...
+            </div>
+        </div>
+    </nav>
+
+    <div class="p-4 overflow-x-auto whitespace-nowrap space-x-4 bg-white border-b">
+        <span class="bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-bold">All Items</span>
+        <span class="bg-gray-200 px-4 py-2 rounded-full text-xs font-bold">Electronics</span>
+        <span class="bg-gray-200 px-4 py-2 rounded-full text-xs font-bold">Grocery</span>
+        <span class="bg-gray-200 px-4 py-2 rounded-full text-xs font-bold">Fashion</span>
+    </div>
+
+    <main class="p-4 max-w-6xl mx-auto min-h-screen">
+        <h2 class="text-lg font-bold mb-4">Nearby Sellers</h2>
+        <div id="product-list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            </div>
+    </main>
+
+    <footer class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 shadow-lg">
+        <button onclick="location.href='index.html'" class="text-blue-600 font-bold text-xs"><i class="block text-xl">🏠</i>Home</button>
+        <button onclick="location.href='merchant.html'" class="text-gray-500 font-bold text-xs"><i class="block text-xl">🏪</i>Sell</button>
+        <button onclick="location.href='delivery.html'" class="text-gray-500 font-bold text-xs"><i class="block text-xl">📦</i>Orders</button>
+    </footer>
+
+    <script src="logic.js"></script>
+</body>
+</html>
