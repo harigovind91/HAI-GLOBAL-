@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAI | User Intelligence Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #fdfcf6; font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.3); }
+        .sanskar-meter { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: 1s ease-in-out; }
+        .input-field { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e5e7eb; margin-bottom: 12px; outline: none; transition: 0.3s; }
+        .input-field:focus { border-color: #3b82f6; ring: 2px rgba(59, 130, 246, 0.1); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="glass-panel p-8 shadow-2xl shadow-blue-100">
+            <h2 class="text-3xl font-black text-slate-800 mb-2 italic">HAI <span class="text-blue-600">LOGIN</span></h2>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">Access Your Secure Node</p>
+
+            <form id="loginForm" onsubmit="handleUserLogin(event)">
+                <input type="email" id="userEmail" class="input-field" placeholder="Email ID / Username" required>
+                <input type="password" id="userPass" class="input-field" placeholder="Master Security Key" required>
+                
+                <div class="flex items-center gap-2 mb-6">
+                    <input type="checkbox" id="remember" class="w-4 h-4">
+                    <label for="remember" class="text-xs font-bold text-slate-500 uppercase">Keep me Authenticated</label>
+                </div>
+
+                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black tracking-widest hover:bg-blue-600 transition shadow-xl">
+                    INITIALIZE ACCESS
+                </button>
+            </form>
+        </div>
+
+        <div id="userDashboard" class="space-y-6">
+            <div class="glass-panel p-6 border-l-8 border-green-500 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-black text-sm uppercase text-green-700">संस्कार मॉड्यूल (v1.0)</h3>
+                    <span class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">सात्विक स्कोर: 85%</span>
+                </div>
+                <p class="text-xs text-slate-600 mb-3 italic">"आपके निस्वार्थ संबंधों और सात्विक प्रेम का वैज्ञानिक विश्लेषण।"</p>
+                <div class="sanskar-meter">
+                    <div class="progress-fill" style="width: 85%;"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-panel p-4 text-center border-b-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Live Tracking</p>
+                    <p class="text-xl font-black text-blue-600 mt-1">1 Active</p>
+                    <button class="text-[9px] mt-2 underline font-bold" onclick="alert('Rider is 2km away')">VIEW MAP</button>
+                </div>
+                <div class="glass-panel p-4 text-center border-b-4 border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Order History</p>
+                    <p class="text-xl font-black text-slate-800 mt-1">12 Orders</p>
+                    <button class="text-[9px] mt-2 underline font-bold">DOWNLOAD LIST</button>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 bg-slate-900 text-white shadow-xl">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-60 uppercase mb-1">HAI Secure Wallet</p>
+                        <h4 class="text-2xl font-black tracking-tighter">₹ 4,250.00</h4>
+                    </div>
+                    <div class="p-2 bg-blue-500 rounded-lg text-xs font-black">ENCRYPTED</div>
+                </div>
+                <button class="mt-6 w-full py-3 bg-white/10 rounded-xl text-[10px] font-bold border border-white/20 hover:bg-white/20 transition">ADD ENERGY (FUNDS)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleUserLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('userEmail').value;
+            const pass = document.getElementById('userPass').value;
+
+            // वैज्ञानिक सुरक्षा चेक
+            if(email && pass) {
+                const userData = {
+                    email: email,
+                    role: 'USER',
+                    loginTime: new Date().toLocaleString()
+                };
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                alert("सफलता! वैज्ञानिक ग्रिड से आपका कनेक्शन स्थापित हो गया है।");
+                window.location.href = 'index.html'; 
+            }
+        }
+
+        // डैशबोर्ड डेटा लोड करने के लिए
+        window.onload = () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if(user) {
+                console.log("Logged in as: " + user.email);
+            }
+        };
+    </script>
+</body>
+</html>
