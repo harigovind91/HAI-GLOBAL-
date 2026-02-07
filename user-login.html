@@ -7,71 +7,73 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #fdfcf6; font-family: 'Inter', sans-serif; }
-        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.3); }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.3); transition: 0.5s ease; }
         .sanskar-meter { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: 1s ease-in-out; }
-        .input-field { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e5e7eb; margin-bottom: 12px; outline: none; transition: 0.3s; }
-        .input-field:focus { border-color: #3b82f6; ring: 2px rgba(59, 130, 246, 0.1); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: 1.5s ease-in-out; width: 0%; }
+        .input-field { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e5e7eb; margin-bottom: 12px; outline: none; }
+        .hidden-node { display: none; opacity: 0; transform: translateY(20px); }
+        .visible-node { display: block; opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-        <div class="glass-panel p-8 shadow-2xl shadow-blue-100">
-            <h2 class="text-3xl font-black text-slate-800 mb-2 italic">HAI <span class="text-blue-600">LOGIN</span></h2>
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">Access Your Secure Node</p>
+    <div class="max-w-4xl mx-auto">
+        <div id="loginSection" class="max-w-md mx-auto glass-panel p-8 shadow-2xl border-t-4 border-blue-600">
+            <h2 class="text-3xl font-black text-slate-800 mb-2 italic">HAI <span class="text-blue-600">HUB</span></h2>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">सुरक्षित यूजर लॉगिन</p>
 
             <form id="loginForm" onsubmit="handleUserLogin(event)">
-                <input type="email" id="userEmail" class="input-field" placeholder="Email ID / Username" required>
-                <input type="password" id="userPass" class="input-field" placeholder="Master Security Key" required>
+                <input type="email" id="userEmail" class="input-field" placeholder="आपका ईमेल आईडी" required>
+                <input type="password" id="userPass" class="input-field" placeholder="आपका सीक्रेट पासवर्ड" required>
                 
-                <div class="flex items-center gap-2 mb-6">
-                    <input type="checkbox" id="remember" class="w-4 h-4">
-                    <label for="remember" class="text-xs font-bold text-slate-500 uppercase">Keep me Authenticated</label>
-                </div>
-
-                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black tracking-widest hover:bg-blue-600 transition shadow-xl">
-                    INITIALIZE ACCESS
+                <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black tracking-widest hover:bg-black transition shadow-xl">
+                    पोर्टल में प्रवेश करें
                 </button>
             </form>
+            <p class="mt-4 text-[10px] text-center text-slate-400 font-bold uppercase">© 2026 HAI Global Systems</p>
         </div>
 
-        <div id="userDashboard" class="space-y-6">
-            <div class="glass-panel p-6 border-l-8 border-green-500 shadow-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-black text-sm uppercase text-green-700">संस्कार मॉड्यूल (v1.0)</h3>
-                    <span class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">सात्विक स्कोर: 85%</span>
-                </div>
-                <p class="text-xs text-slate-600 mb-3 italic">"आपके निस्वार्थ संबंधों और सात्विक प्रेम का वैज्ञानिक विश्लेषण।"</p>
-                <div class="sanskar-meter">
-                    <div class="progress-fill" style="width: 85%;"></div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="glass-panel p-4 text-center border-b-4 border-blue-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Live Tracking</p>
-                    <p class="text-xl font-black text-blue-600 mt-1">1 Active</p>
-                    <button class="text-[9px] mt-2 underline font-bold" onclick="alert('Rider is 2km away')">VIEW MAP</button>
-                </div>
-                <div class="glass-panel p-4 text-center border-b-4 border-slate-800">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Order History</p>
-                    <p class="text-xl font-black text-slate-800 mt-1">12 Orders</p>
-                    <button class="text-[9px] mt-2 underline font-bold">DOWNLOAD LIST</button>
-                </div>
-            </div>
-
-            <div class="glass-panel p-6 bg-slate-900 text-white shadow-xl">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-[10px] font-bold opacity-60 uppercase mb-1">HAI Secure Wallet</p>
-                        <h4 class="text-2xl font-black tracking-tighter">₹ 4,250.00</h4>
+        <div id="userDashboard" class="hidden-node grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <div class="space-y-6">
+                <div class="glass-panel p-6 border-l-8 border-green-500 shadow-lg bg-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-black text-sm uppercase text-green-700">संस्कार मॉड्यूल</h3>
+                        <span id="scoreText" class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">स्कोर: 0%</span>
                     </div>
-                    <div class="p-2 bg-blue-500 rounded-lg text-xs font-black">ENCRYPTED</div>
+                    <p class="text-xs text-slate-500 mb-3 italic">नूतन शिक्षा पद्धति: सात्विक प्रेम एवं निस्वार्थ संबंधों का वैज्ञानिक विश्लेषण।</p>
+                    <div class="sanskar-meter">
+                        <div id="scoreBar" class="progress-fill"></div>
+                    </div>
                 </div>
-                <button class="mt-6 w-full py-3 bg-white/10 rounded-xl text-[10px] font-bold border border-white/20 hover:bg-white/20 transition">ADD ENERGY (FUNDS)</button>
+
+                <div class="glass-panel p-6 bg-slate-900 text-white shadow-xl">
+                    <p class="text-[10px] font-bold opacity-60 uppercase mb-1">HAI SECURE WALLET</p>
+                    <h4 id="walletBalance" class="text-2xl font-black">₹ 0.00</h4>
+                    <div class="mt-4 flex gap-2">
+                        <button class="flex-1 py-2 bg-blue-600 rounded-xl text-[9px] font-black uppercase">Add Funds</button>
+                        <button onclick="logout()" class="flex-1 py-2 bg-red-500/20 border border-red-500/50 rounded-xl text-[9px] font-black uppercase">Logout</button>
+                    </div>
+                </div>
             </div>
+
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-6 text-center border-b-4 border-blue-500 bg-white">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">सक्रिय ऑर्डर</p>
+                        <p id="activeOrders" class="text-2xl font-black text-blue-600 mt-1">0</p>
+                    </div>
+                    <div class="glass-panel p-6 text-center border-b-4 border-slate-800 bg-white">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">कुल खरीदारी</p>
+                        <p id="totalOrders" class="text-2xl font-black text-slate-800 mt-1">0</p>
+                    </div>
+                </div>
+                
+                <button onclick="location.href='index.html'" class="w-full glass-panel p-6 text-center hover:bg-blue-50 transition border border-dashed border-blue-200">
+                    <p class="text-sm font-black text-blue-600">← मार्केटप्लेस पर वापस जाएं</p>
+                </button>
+            </div>
+
         </div>
     </div>
 
@@ -79,28 +81,46 @@
         function handleUserLogin(event) {
             event.preventDefault();
             const email = document.getElementById('userEmail').value;
-            const pass = document.getElementById('userPass').value;
-
-            // वैज्ञानिक सुरक्षा चेक
-            if(email && pass) {
-                const userData = {
-                    email: email,
-                    role: 'USER',
-                    loginTime: new Date().toLocaleString()
-                };
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                alert("सफलता! वैज्ञानिक ग्रिड से आपका कनेक्शन स्थापित हो गया है।");
-                window.location.href = 'index.html'; 
-            }
+            
+            // पब्लिक यूजर डेटा स्ट्रक्चर
+            const userData = {
+                email: email,
+                role: 'USER',
+                sanskarScore: 75, // बेस स्कोर
+                wallet: 500.00,
+                activeCount: 1,
+                totalCount: 5,
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            showDashboard(userData);
         }
 
-        // डैशबोर्ड डेटा लोड करने के लिए
+        function showDashboard(user) {
+            document.getElementById('loginSection').classList.add('hidden');
+            const dash = document.getElementById('userDashboard');
+            dash.classList.remove('hidden-node');
+            dash.classList.add('visible-node');
+
+            // डेटा रेंडरिंग
+            document.getElementById('scoreText').innerText = `सात्विक स्कोर: ${user.sanskarScore}%`;
+            document.getElementById('scoreBar').style.width = `${user.sanskarScore}%`;
+            document.getElementById('walletBalance').innerText = `₹ ${user.wallet.toFixed(2)}`;
+            document.getElementById('activeOrders').innerText = user.activeCount;
+            document.getElementById('totalOrders').innerText = user.totalCount;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.reload();
+        }
+
         window.onload = () => {
             const user = JSON.parse(localStorage.getItem('currentUser'));
-            if(user) {
-                console.log("Logged in as: " + user.email);
-            }
+            if(user) showDashboard(user);
         };
     </script>
 </body>
-</html>
+    </html>
+    
