@@ -1,29 +1,106 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head><title>Merchant Portal</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-50 p-6">
-    <div class="max-w-md mx-auto bg-white p-8 rounded-[2rem] shadow-xl">
-        <h2 class="text-2xl font-black mb-6">Start Selling</h2>
-        <input id="shop-name" placeholder="Shop Name" class="w-full border p-4 rounded-xl mb-4 outline-none">
-        <input id="prod-name" placeholder="Product Name" class="w-full border p-4 rounded-xl mb-4 outline-none">
-        <input id="prod-price" type="number" placeholder="Price (INR)" class="w-full border p-4 rounded-xl mb-6 outline-none">
-        <button onclick="addGlobalProduct()" class="w-full bg-blue-700 text-white py-4 rounded-xl font-bold">List Product Live</button>
+        <div id="previewBox" class="hidden mb-6 flex items-center gap-4 bg-blue-50 p-3 rounded-2xl border border-blue-100">
+            <img id="imgPreview" class="w-20 h-20 object-cover rounded-xl shadow-md">
+            <div class="flex-1">
+                <p class="text-xs font-bold text-blue-600 uppercase">Image Captured</p>
+                <p class="text-xs text-gray-500">Ready to fire to HAI Global Grid</p>
+            </div>
+            <button onclick="resetImage()" class="text-red-500 p-2"><i class="fas fa-trash"></i></button>
+        </div>
+
+        <div class="space-y-4">
+            <input id="prod-name" placeholder="उत्पाद का नाम (e.g. Pure Desi Ghee)" class="w-full p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
+            <div class="flex gap-4">
+                <input id="prod-price" type="number" placeholder="Price (₹)" class="w-1/2 p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
+                <select id="prod-unit" class="w-1/2 p-4 bg-slate-100 rounded-2xl outline-none font-semibold">
+                    <option value="kg">Per KG</option>
+                    <option value="liter">Per Liter</option>
+                    <option value="unit">Per Piece</option>
+                </select>
+            </div>
+            <button onclick="fireToGrid()" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black text-xl shadow-2xl hover:bg-black transition transform active:scale-95">
+                <i class="fas fa-bolt text-yellow-400 mr-2"></i> LIST LIVE NOW
+            </button>
+        </div>
     </div>
 
     <script>
-        function addGlobalProduct() {
-            let market = JSON.parse(localStorage.getItem('hai_market')) || [];
-            const newProd = {
-                id: Date.now(),
-                shopName: document.getElementById('shop-name').value,
-                productName: document.getElementById('prod-name').value,
-                price: document.getElementById('prod-price').value
-            };
-            market.push(newProd);
-            localStorage.setItem('hai_market', JSON.stringify(market));
-            alert("Product listed successfully in HAI Global!");
-            window.location.href = 'index.html';
+        let stream;
+        let useBackCam = true;
+        let finalImageData = null;
+
+        // कैमरा शुरू करें
+        async function initCamera() {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            const constraints = { video: { facingMode: useBackCam ? "environment" : "user" } };
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
+            document.getElementById('webcam').srcObject = stream;
         }
+
+        function switchCamera() {
+            useBackCam = !useBackCam;
+            initCamera();
+        }
+
+        function captureImage() {
+            const video = document.getElementById('webcam');
+            const canvas = document.getElementById('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            displayPreview(canvas.toDataURL('image/jpeg'));
+        }
+
+        function loadFromFile(e) {
+            const reader = new FileReader();
+            reader.onload = () => displayPreview(reader.result);
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function displayPreview(data) {
+            finalImageData = data;
+            document.getElementById('imgPreview').src = data;
+            document.getElementById('previewBox').classList.remove('hidden');
+        }
+
+        function resetImage() {
+            finalImageData = null;
+            document.getElementById('previewBox').classList.add('hidden');
+        }
+
+        // --- THE MASTER FIRING LOGIC ---
+        function fireToGrid() {
+            const name = document.getElementById('prod-name').value;
+            const price = document.getElementById('prod-price').value;
+            const unit = document.getElementById('prod-unit').value;
+            const merchantInfo = JSON.parse(sessionStorage.getItem('current_merchant'));
+
+            if (!name || !price || !finalImageData) {
+                alert("वैज्ञानिक जी, कृपया फोटो और जानकारी पूरी भरें!");
+                return;
+            }
+
+            const product = {
+                id: Date.now(),
+                merchantEmail: merchantInfo ? merchantInfo.email : 'Unknown',
+                shopName: merchantInfo ? merchantInfo.shop : 'Global Vendor',
+                productName: name,
+                price: price,
+                unit: unit,
+                image: finalImageData, // Base64 Data
+                timestamp: new Date().toISOString()
+            };
+
+            // HAI Market Grid में सेव करना
+            let market = JSON.parse(localStorage.getItem('hai_market')) || [];
+            market.push(product);
+            localStorage.setItem('hai_market', JSON.stringify(market));
+
+            alert("✅ उत्पाद HAI Global Grid पर लाइव हो गया है!");
+            window.location.href = 'index.html'; // वापस मॉल पर भेजें
+        }
+
+        window.onload = initCamera;
     </script>
 </body>
-</html>
+        </html>
+
