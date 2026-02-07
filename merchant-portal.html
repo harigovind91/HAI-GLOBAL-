@@ -1,106 +1,126 @@
-        <div id="previewBox" class="hidden mb-6 flex items-center gap-4 bg-blue-50 p-3 rounded-2xl border border-blue-100">
-            <img id="imgPreview" class="w-20 h-20 object-cover rounded-xl shadow-md">
-            <div class="flex-1">
-                <p class="text-xs font-bold text-blue-600 uppercase">Image Captured</p>
-                <p class="text-xs text-gray-500">Ready to fire to HAI Global Grid</p>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAI Global | Merchant Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #0f172a; }
+        .glass-card { background: white; border-radius: 2.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        video { width: 100%; height: 250px; object-fit: cover; border-radius: 1.5rem; background: #000; }
+    </style>
+</head>
+<body class="p-4 flex items-center justify-center min-h-screen">
+
+    <div id="auth-section" class="max-w-md w-full glass-card p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-black italic">HAI<span class="text-blue-600">GLOBAL</span></h1>
+            <p id="auth-title" class="text-gray-500 font-bold mt-2">Merchant Login</p>
+        </div>
+
+        <div id="login-form" class="space-y-4">
+            <input type="email" id="login-email" placeholder="ईमेल आईडी" class="w-full p-4 bg-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" id="login-pass" placeholder="पासवर्ड" class="w-full p-4 bg-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">प्रवेश करें</button>
+            <p class="text-center text-sm">खाता नहीं है? <span onclick="toggleAuth()" class="text-blue-600 font-bold cursor-pointer">Sign Up</span></p>
+        </div>
+
+        <div id="signup-form" class="space-y-4 hidden">
+            <input type="text" id="reg-shop" placeholder="दुकान का नाम" class="w-full p-4 bg-gray-100 rounded-2xl outline-none">
+            <input type="email" id="reg-email" placeholder="ईमेल आईडी" class="w-full p-4 bg-gray-100 rounded-2xl outline-none">
+            <input type="password" id="reg-pass" placeholder="पासवर्ड बनाएं" class="w-full p-4 bg-gray-100 rounded-2xl outline-none">
+            <button onclick="handleSignUp()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">रजिस्टर करें</button>
+            <p class="text-center text-sm">पहले से खाता है? <span onclick="toggleAuth()" class="text-blue-600 font-bold cursor-pointer">Login</span></p>
+        </div>
+    </div>
+
+    <div id="dash-section" class="max-w-md w-full glass-card p-8 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Welcome, <span id="vendor-name" class="text-blue-600">Merchant</span></h2>
+            <button onclick="location.reload()" class="text-red-500 font-bold text-sm">Logout</button>
+        </div>
+
+        <div class="relative mb-6">
+            <video id="webcam" autoplay playsinline></video>
+            <canvas id="canvas" class="hidden"></canvas>
+            <div class="absolute bottom-4 left-0 right-0 flex justify-center">
+                <button onclick="captureImage()" class="bg-red-500 w-12 h-12 rounded-full border-4 border-white shadow-xl"></button>
             </div>
-            <button onclick="resetImage()" class="text-red-500 p-2"><i class="fas fa-trash"></i></button>
         </div>
 
         <div class="space-y-4">
-            <input id="prod-name" placeholder="उत्पाद का नाम (e.g. Pure Desi Ghee)" class="w-full p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
-            <div class="flex gap-4">
-                <input id="prod-price" type="number" placeholder="Price (₹)" class="w-1/2 p-4 bg-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
-                <select id="prod-unit" class="w-1/2 p-4 bg-slate-100 rounded-2xl outline-none font-semibold">
-                    <option value="kg">Per KG</option>
-                    <option value="liter">Per Liter</option>
-                    <option value="unit">Per Piece</option>
+            <div id="previewBox" class="hidden bg-blue-50 p-3 rounded-xl flex items-center gap-3">
+                <img id="imgPreview" class="w-12 h-12 rounded-lg object-cover">
+                <span class="text-xs font-bold text-blue-700">फोटो तैयार है!</span>
+            </div>
+            <input id="prod-name" placeholder="उत्पाद का नाम" class="w-full p-4 bg-gray-100 rounded-2xl outline-none">
+            <div class="flex gap-2">
+                <input id="prod-price" type="number" placeholder="दाम (₹)" class="w-2/3 p-4 bg-gray-100 rounded-2xl outline-none">
+                <select id="prod-unit" class="w-1/3 bg-gray-100 rounded-2xl p-2 text-sm">
+                    <option>Per KG</option>
+                    <option>Liter</option>
+                    <option>Unit</option>
                 </select>
             </div>
-            <button onclick="fireToGrid()" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black text-xl shadow-2xl hover:bg-black transition transform active:scale-95">
-                <i class="fas fa-bolt text-yellow-400 mr-2"></i> LIST LIVE NOW
-            </button>
+            <button onclick="fireToGrid()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-xl">🚀 LIST LIVE NOW</button>
         </div>
     </div>
 
     <script>
-        let stream;
-        let useBackCam = true;
-        let finalImageData = null;
-
-        // कैमरा शुरू करें
-        async function initCamera() {
-            if (stream) stream.getTracks().forEach(t => t.stop());
-            const constraints = { video: { facingMode: useBackCam ? "environment" : "user" } };
-            stream = await navigator.mediaDevices.getUserMedia(constraints);
-            document.getElementById('webcam').srcObject = stream;
+        // --- AUTH LOGIC ---
+        function toggleAuth() {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('signup-form').classList.toggle('hidden');
+            document.getElementById('auth-title').innerText = 
+                document.getElementById('login-form').classList.contains('hidden') ? "Create Account" : "Merchant Login";
         }
 
-        function switchCamera() {
-            useBackCam = !useBackCam;
-            initCamera();
+        function handleSignUp() {
+            const shop = document.getElementById('reg-shop').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            if(!shop || !email || !pass) return alert("सब भरें!");
+            localStorage.setItem('user_' + email, JSON.stringify({shop, email, pass}));
+            alert("सफल! अब लॉगिन करें।");
+            toggleAuth();
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            const user = JSON.parse(localStorage.getItem('user_' + email));
+            if(user && user.pass === pass) {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('dash-section').classList.remove('hidden');
+                document.getElementById('vendor-name').innerText = user.shop;
+                initCamera();
+            } else { alert("गलत जानकारी!"); }
+        }
+
+        // --- CAMERA LOGIC ---
+        let finalImg = null;
+        async function initCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            document.getElementById('webcam').srcObject = stream;
         }
 
         function captureImage() {
             const video = document.getElementById('webcam');
             const canvas = document.getElementById('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0);
-            displayPreview(canvas.toDataURL('image/jpeg'));
-        }
-
-        function loadFromFile(e) {
-            const reader = new FileReader();
-            reader.onload = () => displayPreview(reader.result);
-            reader.readAsDataURL(e.target.files[0]);
-        }
-
-        function displayPreview(data) {
-            finalImageData = data;
-            document.getElementById('imgPreview').src = data;
+            finalImg = canvas.toDataURL('image/jpeg');
+            document.getElementById('imgPreview').src = finalImg;
             document.getElementById('previewBox').classList.remove('hidden');
         }
 
-        function resetImage() {
-            finalImageData = null;
-            document.getElementById('previewBox').classList.add('hidden');
-        }
-
-        // --- THE MASTER FIRING LOGIC ---
         function fireToGrid() {
-            const name = document.getElementById('prod-name').value;
-            const price = document.getElementById('prod-price').value;
-            const unit = document.getElementById('prod-unit').value;
-            const merchantInfo = JSON.parse(sessionStorage.getItem('current_merchant'));
-
-            if (!name || !price || !finalImageData) {
-                alert("वैज्ञानिक जी, कृपया फोटो और जानकारी पूरी भरें!");
-                return;
-            }
-
-            const product = {
-                id: Date.now(),
-                merchantEmail: merchantInfo ? merchantInfo.email : 'Unknown',
-                shopName: merchantInfo ? merchantInfo.shop : 'Global Vendor',
-                productName: name,
-                price: price,
-                unit: unit,
-                image: finalImageData, // Base64 Data
-                timestamp: new Date().toISOString()
-            };
-
-            // HAI Market Grid में सेव करना
-            let market = JSON.parse(localStorage.getItem('hai_market')) || [];
-            market.push(product);
-            localStorage.setItem('hai_market', JSON.stringify(market));
-
-            alert("✅ उत्पाद HAI Global Grid पर लाइव हो गया है!");
-            window.location.href = 'index.html'; // वापस मॉल पर भेजें
+            if(!finalImg || !document.getElementById('prod-name').value) return alert("अधूरा डेटा!");
+            alert("बधाई हो वैज्ञानिक जी! उत्पाद 'Fire' हो गया।");
         }
-
-        window.onload = initCamera;
     </script>
 </body>
-        </html>
-
+                                                                 </html>
+                                                           
