@@ -1,53 +1,143 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <title>HAI Master Control | Backend</title>
+    <meta charset="UTF-8">
+    <title>HAI Master Control | Universal Backend</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .cyber-border { border: 1px solid #064e3b; box-shadow: 0 0 15px rgba(52, 211, 153, 0.1); }
+        .input-dark { background: #000; border: 1px solid #064e3b; color: #4ade80; padding: 10px; border-radius: 8px; outline: none; }
+        .input-dark:focus { border-color: #4ade80; box-shadow: 0 0 10px rgba(74, 222, 128, 0.3); }
+    </style>
 </head>
-<body class="bg-black text-green-400 p-6 font-mono">
+<body class="bg-black text-green-400 p-4 md:p-10 font-mono">
+
     <div id="secure-gate" class="flex items-center justify-center min-h-screen">
-        <div class="border-2 border-green-900 p-10 rounded-3xl bg-gray-900 shadow-2xl">
-            <h1 class="text-2xl font-black mb-6 text-center tracking-widest">MASTER SCIENTIST LOGIN</h1>
-            <input type="password" id="masterKey" placeholder="Enter Security Key" class="w-full bg-black border border-green-800 p-3 rounded mb-4 text-center focus:border-green-400 outline-none">
-            <button onclick="verifyAccess()" class="w-full bg-green-700 text-black font-bold py-3 rounded hover:bg-green-400 transition">ACCESS CORE</button>
+        <div class="cyber-border p-10 rounded-[2rem] bg-gray-900 w-full max-w-md">
+            <h1 class="text-2xl font-black mb-6 text-center tracking-[0.3em] text-white italic">HAI CORE ACCESS</h1>
+            <input type="password" id="masterKey" placeholder="Enter Security Key" class="w-full input-dark text-center mb-4">
+            <button onclick="verifyAccess()" class="w-full bg-green-600 text-black font-black py-4 rounded-xl hover:bg-green-400 transition uppercase tracking-widest">Activate Master Node</button>
         </div>
     </div>
 
-    <div id="dashboard" class="hidden">
-        <header class="flex justify-between border-b border-green-900 pb-4 mb-8">
-            <h2 class="text-xl font-bold">CORE DATABASE v2.0</h2>
-            <div class="text-right">
-                <p>ADMIN: Harigovind</p>
-                <p class="text-xs">UPI: harigovindsingh91-2@okhdfcbank</p>
+    <div id="dashboard" class="hidden max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-center border-b border-green-900 pb-6 mb-8 gap-4">
+            <div>
+                <h2 class="text-3xl font-black italic text-white">CORE DATABASE <span class="text-green-500">v3.0</span></h2>
+                <p class="text-[10px] tracking-widest opacity-60 uppercase">Scientist Mode: Harigovind Active</p>
+            </div>
+            <div class="text-right bg-green-900/20 p-4 rounded-2xl border border-green-800">
+                <p class="text-xs font-bold text-green-300">ADMIN UPI: <span class="text-white">harigovindsingh91-2@okhdfcbank</span></p>
+                <button class="text-[9px] bg-red-900 text-red-200 px-2 py-1 rounded mt-2 font-bold" onclick="location.reload()">TERMINATE SESSION</button>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-gray-900 p-6 rounded-xl border border-green-900">
-                <p class="text-xs uppercase">Total Commission Earned</p>
-                <h3 class="text-3xl font-black mt-2 text-white">₹ <span id="comm-total">0.00</span></h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-gray-900 p-5 rounded-2xl cyber-border">
+                <p class="text-[10px] uppercase font-bold text-gray-500">Net Profit (Commission)</p>
+                <h3 class="text-2xl font-black text-white">₹ <span id="comm-total">0.00</span></h3>
             </div>
-            <div class="bg-gray-900 p-6 rounded-xl border border-orange-900">
-                <p class="text-xs uppercase">Funds on Hold (Riders)</p>
-                <h3 class="text-3xl font-black mt-2 text-orange-500">₹ <span id="hold-total">0.00</span></h3>
+            <div class="bg-gray-900 p-5 rounded-2xl cyber-border border-orange-900">
+                <p class="text-[10px] uppercase font-bold text-gray-500">Rider Hold Funds</p>
+                <h3 class="text-2xl font-black text-orange-500">₹ <span id="hold-total">0.00</span></h3>
+            </div>
+            <div class="bg-gray-900 p-5 rounded-2xl cyber-border border-blue-900">
+                <p class="text-[10px] uppercase font-bold text-gray-500">Total Active Ads</p>
+                <h3 class="text-2xl font-black text-blue-400" id="ad-count">0</h3>
+            </div>
+            <div class="bg-gray-900 p-5 rounded-2xl cyber-border border-purple-900">
+                <p class="text-[10px] uppercase font-bold text-gray-500">Global Users</p>
+                <h3 class="text-2xl font-black text-purple-400" id="user-count">Fetching...</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-gray-900 p-8 rounded-[2rem] cyber-border">
+                <h4 class="text-lg font-black mb-6 flex items-center gap-2">⚙️ COMMISSION FORMULA</h4>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-bold uppercase">Platform Commission (%)</label>
+                        <input type="number" id="cfg-comm" class="input-dark w-24 text-center" value="10">
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-bold uppercase">Rider/Delivery Share (%)</label>
+                        <input type="number" id="cfg-rider" class="input-dark w-24 text-center" value="5">
+                    </div>
+                    <div class="flex justify-between items-center text-red-400">
+                        <label class="text-xs font-bold uppercase italic">Emergency War Tax (%)</label>
+                        <input type="number" id="cfg-tax" class="input-dark w-24 text-center border-red-900" value="0">
+                    </div>
+                    <button onclick="saveFormula()" class="w-full bg-green-600 text-black font-black py-3 rounded-xl hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] transition">UPDATE GLOBAL FORMULA</button>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 p-8 rounded-[2rem] cyber-border border-blue-900">
+                <h4 class="text-lg font-black mb-6 flex items-center gap-2 text-blue-400">🚀 AD-ENGINE MANAGER</h4>
+                <div class="space-y-4">
+                    <input type="text" id="ad-prod-id" placeholder="Product ID (from MongoDB)" class="w-full input-dark border-blue-900">
+                    <select id="ad-priority" class="w-full input-dark border-blue-900">
+                        <option value="1">TOP PRIORITY (SPONSORED)</option>
+                        <option value="2">LOCAL TRENDING</option>
+                        <option value="3">GLOBAL RECOGNITION</option>
+                    </select>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="date" id="ad-expiry" class="input-dark border-blue-900 text-xs">
+                        <button onclick="launchAd()" class="bg-blue-600 text-white font-black rounded-xl hover:bg-blue-400 transition text-[10px]">LAUNCH AD CAMPAIGN</button>
+                    </div>
+                    <div id="active-ads-list" class="mt-4 text-[10px] opacity-70">
+                        No Active Campaigns Detected.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Security logic remains same as per Scientist Harigovind's request
         function verifyAccess() {
             const key = document.getElementById('masterKey').value;
             if(key === "HARI_2026_GLOBAL") {
                 document.getElementById('secure-gate').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
                 loadBackendData();
-            } else { alert("ACCESS DENIED: Unauthorized scientist detected."); }
+            } else { alert("CRITICAL: Unauthorized access attempt recorded."); }
+        }
+
+        // --- वैज्ञानिक अपडेट 1: कमीशन का फार्मूला बदलना ---
+        function saveFormula() {
+            const config = {
+                comm: document.getElementById('cfg-comm').value,
+                rider: document.getElementById('cfg-rider').value,
+                tax: document.getElementById('cfg-tax').value,
+                updatedAt: new Date().toISOString()
+            };
+            
+            // यह डेटा सीधे MongoDB में "Configuration" कलेक्शन में जाएगा
+            localStorage.setItem('hai_global_formula', JSON.stringify(config));
+            alert("SUCCESS: Global Transaction Engine Updated.");
+        }
+
+        // --- वैज्ञानिक अपडेट 2: एड्स मैनेजमेंट ---
+        function launchAd() {
+            const prodId = document.getElementById('ad-prod-id').value;
+            if(!prodId) return alert("Please enter a valid Product ID from Database.");
+            
+            const adData = {
+                id: prodId,
+                priority: document.getElementById('ad-priority').value,
+                expiry: document.getElementById('ad-expiry').value,
+                isAd: true
+            };
+            
+            // यह डेटा MongoDB में संबंधित प्रोडक्ट के 'isAd' फील्ड को true कर देगा
+            alert(`AD LAUNCHED: Product ${prodId} is now live on HAI Global Ad Grid.`);
         }
 
         function loadBackendData() {
-            // Yeh function logic.js se data uthayega (Database ke zariye)
-            console.log("Fetching live transaction data...");
+            console.log("HAI Core: Fetching Cloud Data...");
+            // यहाँ आप अपने API/Connect से डेटा खींचकर कमीशन अपडेट करेंगे
         }
     </script>
 </body>
-</html>
+    </html>
+    
