@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAI Profile Setup | Identity Node</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .profile-bg { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .camera-circle { width: 150px; height: 150px; border: 4px dashed #dc2626; border-radius: 50%; display: flex; items-center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; }
+        .glass-input { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(5px); border: 1px solid rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="profile-bg min-h-screen p-6 font-sans">
+
+    <div class="max-w-2xl mx-auto bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-red-100">
+        <div class="bg-black text-white p-8 text-center">
+            <h1 class="text-3xl font-black italic tracking-tighter">HAI <span class="text-red-600">IDENTITY</span></h1>
+            <p id="setup-title" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Setting up User Node...</p>
+        </div>
+
+        <div class="p-8">
+            <div class="flex flex-col items-center mb-8">
+                <div class="camera-circle group" onclick="startCamera()">
+                    <video id="video" class="absolute inset-0 w-full h-full object-cover hidden" autoplay></video>
+                    <img id="profile-preview" src="https://via.placeholder.com/150?text=CLICK+PHOTO" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <span class="text-white text-xs font-bold">OPEN CAMERA</span>
+                    </div>
+                </div>
+                <button id="capture-btn" class="hidden mt-4 bg-red-600 text-white px-4 py-2 rounded-full text-[10px] font-black" onclick="takePhoto()">CAPTURE PHOTO</button>
+            </div>
+
+            <div id="form-fields" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-gray-500 uppercase px-2">पूर्ण नाम (Full Name)</label>
+                    <input type="text" id="full-name" class="w-full p-4 rounded-2xl glass-input outline-none focus:ring-2 focus:ring-red-600 font-bold">
+                </div>
+
+                <div id="address-section">
+                    <label class="text-[10px] font-black text-gray-500 uppercase px-2">सटीक पता (Delivery/Shop Location)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="address" placeholder="Loading GPS..." class="flex-grow p-4 rounded-2xl glass-input outline-none font-bold">
+                        <button onclick="getGPS()" class="bg-blue-600 text-white p-4 rounded-2xl">📍</button>
+                    </div>
+                </div>
+
+                <div id="seller-extra" class="hidden space-y-4">
+                    <div>
+                        <label class="text-[10px] font-black text-green-600 uppercase px-2">दुकान का नाम (Shop Name)</label>
+                        <input type="text" id="shop-name" class="w-full p-4 rounded-2xl border-2 border-green-100 outline-none font-bold">
+                    </div>
+                </div>
+
+                <div id="rider-extra" class="hidden space-y-4">
+                    <div>
+                        <label class="text-[10px] font-black text-orange-600 uppercase px-2">वाहन नंबर (Vehicle Number)</label>
+                        <input type="text" id="vehicle-no" placeholder="UP32-XX-XXXX" class="w-full p-4 rounded-2xl border-2 border-orange-100 outline-none font-bold">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-red-50 rounded-2xl border border-red-100">
+                <p class="text-[9px] italic text-red-800 font-bold">
+                    "मैं शपथ लेता हूँ कि HAI Global के माध्यम से मैं 'सात्विक प्रेम' और 'निस्वार्थ संबंधों' के साथ व्यापार/सेवा करूँगा।"
+                </p>
+            </div>
+
+            <button onclick="saveProfile()" class="w-full bg-black text-white p-5 rounded-3xl font-black mt-8 hover:bg-red-600 transition shadow-xl">
+                ACTIVATE IDENTITY NODE
+            </button>
+        </div>
+    </div>
+
+    <canvas id="canvas" class="hidden"></canvas>
+
+    <script>
+        const userNode = JSON.parse(localStorage.getItem('hai_user'));
+        
+        // पेज लोड होते ही रोल चेक करना
+        window.onload = () => {
+            if(!userNode) window.location.href = 'index.html';
+            
+            document.getElementById('setup-title').innerText = `Setting up ${userNode.role} Node...`;
+            
+            if(userNode.role === 'seller') document.getElementById('seller-extra').classList.remove('hidden');
+            if(userNode.role === 'rider') document.getElementById('rider-extra').classList.remove('hidden');
+        };
+
+        // कैमरा लॉजिक
+        let stream;
+        async function startCamera() {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+            video.classList.remove('hidden');
+            document.getElementById('profile-preview').classList.add('hidden');
+            document.getElementById('capture-btn').classList.remove('hidden');
+        }
+
+        function takePhoto() {
+            const canvas = document.getElementById('canvas');
+            const video = document.getElementById('video');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const data = canvas.toDataURL('image/png');
+            document.getElementById('profile-preview').src = data;
+            document.getElementById('profile-preview').classList.remove('hidden');
+            video.classList.add('hidden');
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        // GPS लॉजिक
+        function getGPS() {
+            navigator.geolocation.getCurrentPosition(pos => {
+                document.getElementById('address').value = `Lat: ${pos.coords.latitude}, Long: ${pos.coords.longitude}`;
+            });
+        }
+
+        // प्रोफाइल सेव करना
+        function saveProfile() {
+            const profileData = {
+                name: document.getElementById('full-name').value,
+                address: document.getElementById('address').value,
+                img: document.getElementById('profile-preview').src,
+                shop: document.getElementById('shop-name').value || '',
+                vehicle: document.getElementById('vehicle-no').value || '',
+                role: userNode.role,
+                isSetupComplete: true
+            };
+
+            localStorage.setItem('hai_profile_' + userNode.contact, JSON.stringify(profileData));
+            alert("Identity Node Activated! Redirecting to Dashboard...");
+            
+            // सही डैशबोर्ड पर भेजें
+            const routes = { 'user': 'user-dashboard.html', 'seller': 'merchant-portal.html', 'rider': 'delivery-boy.html' };
+            window.location.href = routes[userNode.role];
+        }
+    </script>
+</body>
+</html>
